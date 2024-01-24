@@ -18,7 +18,7 @@ namespace fnn
         Output,
     };
 
-    std::string NeuronTypeToString(const NeuronType type);
+    std::string neuronTypeToString(const NeuronType type);
 
     struct Neuron final
     {

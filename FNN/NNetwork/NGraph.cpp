@@ -26,48 +26,24 @@ NGraph::NGraph(const std::initializer_list<size_t> &layerSizes, const std::share
         const bool isInputLayer = (layerIt == layerSizes.begin());
         const bool isOutputLayer = (std::next(layerIt) == layerSizes.end());
 
+        // Create neurons
         for (size_t j = 0; j < layerSize; ++j)
         {
             if (isInputLayer)
             {
-                AddNeuron(neuronID,
-                    NeuronBuilder::create()
-                    .AsType(NeuronType::Input)
-                    .HasTailConnection(layerSize)
-                    .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
-                    .Build()
-                );
+                AddNeuron(neuronID, NeuronBuilder::CreateAsType(NeuronType::Input).Build());
                 m_inputs.insert(neuronID);
             }
             else if (isOutputLayer)
             {
-                AddNeuron(neuronID,
-                    NeuronBuilder::create()
-                    .AsType(NeuronType::Output)
-                    .HasTarget()
-                    .HasLearningRate()
-                    .HasHeadConnection()
-                    .WithActivationFunction(std::make_shared<EmptyStrategy>())
-                    .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
-                    .WithValueCalculation(std::make_shared<NeuronValueStrategy>())
-                    .WithWeightCalculation(std::make_shared<NeuronWeightStrategy>())
-                    .Build()
+                AddNeuron(neuronID,NeuronBuilder::CreateAsType(NeuronType::Output).Build()
                 );
                 m_outputs.insert(neuronID);
             }
             else
             {
                 AddNeuron(neuronID,
-                    NeuronBuilder::create()
-                    .AsType(NeuronType::Hidden)
-                    .HasLearningRate()
-                    .HasHeadConnection()
-                    .HasTailConnection()
-                    .WithActivationFunction(std::make_shared<EmptyStrategy>())
-                    .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
-                    .WithValueCalculation(std::make_shared<NeuronValueStrategy>())
-                    .WithWeightCalculation(std::make_shared<NeuronWeightStrategy>())
-                    .Build()
+                    NeuronBuilder::CreateAsType(NeuronType::Hidden).Build()
                 );
             }
             ++neuronID;

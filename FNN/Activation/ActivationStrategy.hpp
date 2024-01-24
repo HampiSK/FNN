@@ -6,10 +6,10 @@ namespace fnn
 {
     // Concrete activation functions
 
-    class EmptyStrategy final : public INeuronFunctionStrategy
+    class EmptyActivationStrategy final : public INeuronFunctionStrategy
     {
     public:
-        ~EmptyStrategy() override = default;
+        ~EmptyActivationStrategy() override = default;
 
         float Activation(const float input) override;
         float Derivation(const float activationOutput) override;

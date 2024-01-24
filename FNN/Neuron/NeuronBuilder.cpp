@@ -1,12 +1,49 @@
 #include "NeuronBuilder.hpp"
 
+#include "ActivationStrategy.hpp"
+#include "NeuronStrategy.hpp"
 #include "../Edge/Edge.hpp"
 
 using namespace fnn;
 
-NeuronBuilder NeuronBuilder::create()
+NeuronBuilder NeuronBuilder::Create()
 {
     return NeuronBuilder();
+}
+
+NeuronBuilder NeuronBuilder::CreateAsType(const NeuronType type)
+{
+    switch (type)
+    {
+    case NeuronType::Input:
+        return NeuronBuilder()
+            .AsType(NeuronType::Input)
+            .HasTailConnection()
+            .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>());
+    case NeuronType::Output:
+        return NeuronBuilder()
+            .AsType(NeuronType::Output)
+            .HasTarget()
+            .HasLearningRate()
+            .HasHeadConnection()
+            .WithActivationFunction(std::make_shared<EmptyActivationStrategy>())
+            .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
+            .WithValueCalculation(std::make_shared<NeuronValueStrategy>())
+            .WithWeightCalculation(std::make_shared<NeuronWeightStrategy>());
+    case NeuronType::Hidden:
+        return NeuronBuilder()
+            .AsType(NeuronType::Hidden)
+            .HasLearningRate()
+            .HasHeadConnection()
+            .HasTailConnection()
+            .WithActivationFunction(std::make_shared<EmptyActivationStrategy>())
+            .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
+            .WithValueCalculation(std::make_shared<NeuronValueStrategy>())
+            .WithWeightCalculation(std::make_shared<NeuronWeightStrategy>());
+    default:
+        return NeuronBuilder();
+    }
+    
 }
 
 NeuronBuilder NeuronBuilder::AsType(const NeuronType type)

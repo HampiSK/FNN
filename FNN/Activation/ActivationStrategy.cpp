@@ -6,12 +6,12 @@
 
 using namespace fnn;
 
-float EmptyStrategy::Activation(const float input)
+float EmptyActivationStrategy::Activation(const float input)
 {
     return input;
 }
 
-float EmptyStrategy::Derivation(const float activationOutput)
+float EmptyActivationStrategy::Derivation(const float activationOutput)
 {
     return activationOutput;
 }

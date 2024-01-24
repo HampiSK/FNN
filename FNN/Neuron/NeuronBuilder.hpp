@@ -10,7 +10,8 @@ namespace fnn
     class NeuronBuilder final
     {
     public:
-        static NeuronBuilder create();
+        static NeuronBuilder Create();
+        static NeuronBuilder CreateAsType(const NeuronType type);
 
         NeuronBuilder AsType(const NeuronType type);
 
