@@ -1,26 +1,27 @@
-# C++ Flexible Neural Network (FNN)
+# Flexible Neural Network (FNN)
 
-FNN is a flexible, simple neural network library that allows for unprecedented customization in network design.
+FNN is a flexible, light weight and simple neural network that allows for unprecedented customization in network design.
 
-Imagine having each neuron using different activation function - done.
-What about custom layer connections - done, link neurons directly to any layer.
-Custom neuron creation - done it too.
-W-what if ... - done.
+- Imagine having each neuron using different activation function - Done.
+- What about custom layer connections - Done, link neurons directly to/from any layer.
+- Custom neuron properties - Done it too.
+- Can I also choose how weights are updated - Yep, together with error an value, all yours.
+- W-what if ... - Done.
 
 Wow, that is amazing!
 
-Discover FNN's capabilities and explore examples in the App/Source directory.
+Discover FNN's capabilities and explore examples in the App/Source/Example directory.
 
 ## Getting Started
 1. Open script directory and based on your operating system execute setup file
 2. Enjoy
 
 ## Included
-- FNN static library
-- Some example code (in `App/Source`)
+- FNN library
+- Some example code (in `App/Source/Example`)
 - Simple `.gitignore` to ignore project files and binaries
 - Premake binaries for Win/Mac/Linux (`v5.0-beta2`)
 
 ## License
-- UNLICENSE for this repository (see `UNLICENSE.txt` for more details)
+- LICENSE for this repository (see `LICENSE.txt` for more details)
 - Premake is licensed under BSD 3-Clause (see included LICENSE.txt file for more details)
