@@ -1,5 +1,6 @@
 #include "NNetwork.hpp"
 
+#include <stack>
 #include <ranges>
 
 using namespace fnn;
@@ -15,13 +16,17 @@ NNetwork::NNetwork(const std::initializer_list<size_t> &layerSizes, const std::s
 
 bool NNetwork::Fit(const std::vector<std::vector<float>> &trainX, const std::vector<std::vector<float>> &trainY, const size_t epochs)
 {
-    if (m_network->Size() == 0 || trainX.size() != trainY.size())
+    if (m_network == nullptr || m_network->Size() == 0 || trainX.size() != trainY.size())
     {
-        // Cannot fit empty network
+        // Cannot fit empty network or invalid training data size
         return false;
     }
 
-    // TODO: Detect cyclic routes
+    // Detected cyclic routes using DFS
+    if (HasCycleForward() || HasCycleBackward())
+    {
+        return false;
+    }
 
     for (size_t epoch = 0; epoch < epochs; ++epoch)
     {
@@ -46,6 +51,18 @@ bool NNetwork::Fit(const std::vector<std::vector<float>> &trainX, const std::vec
 
 bool NNetwork::Predict(const std::vector<std::vector<float>> &testX, std::vector<std::vector<float>> &output)
 {
+    if (m_network == nullptr)
+    {
+        // Cannot continue with non existing network
+        return false;
+    }
+
+    // Detected cyclic routes using DFS
+    if (HasCycleForward())
+    {
+        return false;
+    }
+
     output.clear();
     output.reserve(testX.size());
 
@@ -74,6 +91,156 @@ bool NNetwork::Predict(const std::vector<std::vector<float>> &testX, std::vector
         output.push_back(std::move(currentOutput));
     }
     return true;
+}
+
+bool NNetwork::HasCycleForward() const
+{
+    // Using DFS to detect cycles
+    constexpr const int NOT_VISITED = 0;
+    constexpr const int VISITING = 1;
+    constexpr const int VISITED = 2;
+
+    std::unordered_map<std::shared_ptr<Neuron>, int> state;
+    state.reserve(m_network->Size());
+
+    for (const auto &inputId : m_network->m_inputs)
+    {
+        // Skip if already visited or in progress
+        const auto neruon = m_network->GetNeuron(inputId);
+        if (state[neruon] != NOT_VISITED)
+        { 
+            continue;
+        }
+
+        std::stack<std::shared_ptr<Neuron>> stack;
+        stack.push(neruon);
+
+        while (! stack.empty())
+        {
+            const std::shared_ptr<Neuron> currentNeruon = stack.top();
+
+            if (state[currentNeruon] == NOT_VISITED)
+            {
+                state[currentNeruon] = VISITING;
+            }
+            else if (state[currentNeruon] == VISITING)
+            {
+                state[currentNeruon] = VISITED;
+                stack.pop();
+                continue;
+            }
+
+            // There is no where to go, last neuron reached
+            if(! currentNeruon->m_tailConnections.has_value())
+            {
+                state[currentNeruon] = VISITED;
+                stack.pop();
+                continue;
+            }
+
+            bool hasUnvisitedChildren = false;
+            for (const auto &tailEdge : currentNeruon->m_tailConnections.value())
+            {
+                const std::shared_ptr<Neuron> childNeruon = tailEdge.m_tail;
+                if (state[childNeruon] == VISITING)
+                { 
+                    return true; // Cycle detected
+                }
+
+                if (state[childNeruon] == NOT_VISITED)
+                { 
+                    stack.push(childNeruon);
+                    hasUnvisitedChildren = true;
+                    break; // Early break after pushing the first unvisited child
+                }
+            }
+
+            if (! hasUnvisitedChildren)
+            {
+                // If all children are visited or the node has no children,
+                // mark it as visited and pop it from the stack
+                state[currentNeruon] = VISITED;
+                stack.pop();
+            }
+        }
+    }
+
+    return false; // No cycles found
+}
+
+bool NNetwork::HasCycleBackward() const
+{
+    // Using DFS to detect cycles
+    constexpr const int NOT_VISITED = 0;
+    constexpr const int VISITING = 1;
+    constexpr const int VISITED = 2;
+
+    std::unordered_map<std::shared_ptr<Neuron>, int> state;
+    state.reserve(m_network->Size());
+
+    for (const auto& oututId : m_network->m_outputs)
+    {
+        // Skip if already visited or in progress
+        const auto neruon = m_network->GetNeuron(oututId);
+        if (state[neruon] != NOT_VISITED)
+        {
+            continue;
+        }
+
+        std::stack<std::shared_ptr<Neuron>> stack;
+        stack.push(neruon);
+
+        while (!stack.empty())
+        {
+            const std::shared_ptr<Neuron> currentNeruon = stack.top();
+
+            if (state[currentNeruon] == NOT_VISITED)
+            {
+                state[currentNeruon] = VISITING;
+            }
+            else if (state[currentNeruon] == VISITING)
+            {
+                state[currentNeruon] = VISITED;
+                stack.pop();
+                continue;
+            }
+
+            // There is no where to go, last neuron reached
+            if (! currentNeruon->m_headConnections.has_value())
+            {
+                state[currentNeruon] = VISITED; // Mark as black (visited)
+                stack.pop();
+                continue;
+            }
+
+            bool hasUnvisitedChildren = false;
+            for (const auto &tailEdge : currentNeruon->m_headConnections.value())
+            {
+                const std::shared_ptr<Neuron> childNeruon = tailEdge.m_head;
+                if (state[childNeruon] == VISITING)
+                {
+                    return true; // Cycle detected
+                }
+
+                if (state[childNeruon] == NOT_VISITED)
+                {
+                    stack.push(childNeruon);
+                    hasUnvisitedChildren = true;
+                    break; // Early break after pushing the first unvisited child
+                }
+            }
+
+            if (! hasUnvisitedChildren)
+            {
+                // If all children are visited or the node has no children,
+                // mark it as visited and pop it from the stack
+                state[currentNeruon] = VISITED;
+                stack.pop();
+            }
+        }
+    }
+
+    return false; // No cycles found
 }
 
 bool NNetwork::ForwardPropagate(const std::vector<float> &x)

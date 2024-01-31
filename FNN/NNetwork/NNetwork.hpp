@@ -24,6 +24,10 @@ namespace fnn
         bool Predict(const std::vector<std::vector<float>> &testX, std::vector<std::vector<float>> &output);
 
     private:
+        // TODO: When I start hating my self, implement option to allow maximum number of allowed cycles
+        bool HasCycleForward() const;
+        bool HasCycleBackward() const;
+
         bool ForwardPropagate(const std::vector<float> &x);
         bool BackwardPropagateError(const std::vector<float> &y);
         bool BackwardPropagateWeights();
