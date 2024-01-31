@@ -16,7 +16,10 @@ project "App"
       "../FNN/Edge",
       "../FNN/Neuron",
       "../FNN/NNetwork",
-      "../FNN/Random"
+      "../FNN/Random",
+
+      -- Include Examples
+      "Source/Example"
    }
 
    links
