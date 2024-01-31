@@ -190,7 +190,7 @@ bool NNetwork::HasCycleBackward() const
         std::stack<std::shared_ptr<Neuron>> stack;
         stack.push(neruon);
 
-        while (!stack.empty())
+        while (! stack.empty())
         {
             const std::shared_ptr<Neuron> currentNeruon = stack.top();
 
@@ -214,9 +214,9 @@ bool NNetwork::HasCycleBackward() const
             }
 
             bool hasUnvisitedChildren = false;
-            for (const auto &tailEdge : currentNeruon->m_headConnections.value())
+            for (const auto &headEdge : currentNeruon->m_headConnections.value())
             {
-                const std::shared_ptr<Neuron> childNeruon = tailEdge.m_head;
+                const std::shared_ptr<Neuron> childNeruon = headEdge.m_head;
                 if (state[childNeruon] == VISITING)
                 {
                     return true; // Cycle detected
