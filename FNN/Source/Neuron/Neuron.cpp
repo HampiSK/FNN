@@ -2,7 +2,7 @@
 
 using namespace fnn;
 
-std::string fnn::neuronTypeToString(const NeuronType type)
+std::string fnn::utility::neuronTypeToString(const NeuronType type)
 {
     using enum NeuronType;
 

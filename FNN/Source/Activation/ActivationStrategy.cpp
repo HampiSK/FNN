@@ -62,5 +62,5 @@ float LinearStrategy::Activation(const float input)
 
 float LinearStrategy::Derivation(const float activationOutput)
 {
-    return 1.0f; // Derivative of f(x) = x is 1
+    return 1.0f;
 }

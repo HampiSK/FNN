@@ -13,16 +13,18 @@ NeuronBuilder NeuronBuilder::Create()
 
 NeuronBuilder NeuronBuilder::CreateAsType(const NeuronType type)
 {
+    using enum fnn::NeuronType;
+
     switch (type)
     {
-    case NeuronType::Input:
+    case Input:
         return NeuronBuilder()
-            .AsType(NeuronType::Input)
+            .AsType(Input)
             .HasTailConnection()
             .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>());
-    case NeuronType::Output:
+    case Output:
         return NeuronBuilder()
-            .AsType(NeuronType::Output)
+            .AsType(Output)
             .HasTarget()
             .HasLearningRate()
             .HasHeadConnection()
@@ -30,9 +32,9 @@ NeuronBuilder NeuronBuilder::CreateAsType(const NeuronType type)
             .WithErrorCalculation(std::make_shared<NeuronErrorStrategy>())
             .WithValueCalculation(std::make_shared<NeuronValueStrategy>())
             .WithWeightCalculation(std::make_shared<NeuronWeightStrategy>());
-    case NeuronType::Hidden:
+    case Hidden:
         return NeuronBuilder()
-            .AsType(NeuronType::Hidden)
+            .AsType(Hidden)
             .HasLearningRate()
             .HasHeadConnection()
             .HasTailConnection()
@@ -104,5 +106,6 @@ NeuronBuilder NeuronBuilder::WithWeightCalculation(const std::shared_ptr<INeuron
 
 std::shared_ptr<Neuron> NeuronBuilder::Build()
 {
-    return m_neuron;
+    // Transfer ownership of the neuron, Neuron Builder is no longer usable
+    return std::move(m_neuron);
 }
