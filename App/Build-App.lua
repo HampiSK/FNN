@@ -9,17 +9,18 @@ project "App"
 
    includedirs
    {
-      "Source",
-
       -- Include FNN
-      "../FNN/Activation",
-      "../FNN/Edge",
-      "../FNN/Neuron",
-      "../FNN/NNetwork",
-      "../FNN/Random",
+      "../FNN/Source/Activation",
+      "../FNN/Source/Edge",
+      "../FNN/Source/Neuron",
+      "../FNN/Source/NNetwork",
+      "../FNN/Source/Random",
 
       -- Include Examples
-      "Source/Example"
+      "Source/Example",
+
+      -- Include Self
+      "Source"
    }
 
    links

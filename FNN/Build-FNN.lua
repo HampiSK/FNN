@@ -9,11 +9,11 @@ project "FNN"
 
    includedirs
    {
-      "Activation",
-      "Edge",
-      "Neuron",
-      "NNetwork",
-      "Random"
+      "Source/Activation",
+      "Source/Edge",
+      "Source/Neuron",
+      "Source/NNetwork",
+      "Source/Random"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
