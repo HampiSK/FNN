@@ -12,6 +12,12 @@ Wow, that is amazing!
 
 Discover FNN's capabilities and explore examples in the App/Source/Example directory.
 
+## Disclaimer
+The current version of FNN does not leverage various optimization techniques that could significantly improve its performance and accuracy in predictions. The primary goal, however, was to ensure flexibility and to investigate unconventional approaches in constructing simple neural networks.
+
+## Requirements
+- [Visual Studio 2022](https://visualstudio.com) (Not strictly required, however included setup scripts only support this)
+
 ## Getting Started
 1. Open script directory and based on your operating system execute setup file
 2. Enjoy
